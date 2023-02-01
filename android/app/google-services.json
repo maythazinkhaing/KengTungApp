@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "821745239908",
+    "project_id": "ktdb-4cefc",
+    "storage_bucket": "ktdb-4cefc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821745239908:android:f86f031f6314a7f3241c71",
+        "android_client_info": {
+          "package_name": "com.kengtung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821745239908-olp7jjt6r7u1riptjpao7drclj7ukc0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3uHiLCfiBALmqITyRVm-Z1jBLEADBtYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821745239908-olp7jjt6r7u1riptjpao7drclj7ukc0q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "821745239908-sko9n5pghlbnfokm336suigmnl4e5r3m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.KengTung"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
