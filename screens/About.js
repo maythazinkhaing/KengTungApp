@@ -30,10 +30,10 @@ function About({navigation}) {
             <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>
               Keng Tung
             </Text>{' '}
-            (also known as Kyaing Tong) is situated in the Eastern Shan State of
-            Myanmar. It is nestled in a sprawling valley surrounded by
-            undulating hills and mountains carpeted in paddy fields and tea
-            plantations.
+            (also known as Kyaing Tong in Burmese) is situated in the Eastern
+            Shan State of Myanmar. It is nestled in a sprawling valley
+            surrounded by undulating hills and mountains carpeted in paddy
+            fields and tea plantations.
           </Text>
         </View>
         {/* image */}
@@ -55,14 +55,27 @@ function About({navigation}) {
             {'\t'}
             Kyaing Tong is known for its unique landscape and ethnic tribes such
             as the{' '}
-            <Text style={{fontWeight: 'bold'}}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: '#FEB139',
+                fontStyle: 'italic',
+              }}>
               Wa, Ann, Akha, Akhu, Palaung
             </Text>{' '}
-            and <Text style={{fontWeight: 'bold'}}>Lahu</Text>. One will be able
-            to hear the dialect and view the ware of these ethnicities at the
-            vibrant central market and day-long hikes into the mountains offer
-            the chance to visit the ethnic villages and interact with the
-            inhabitants there.
+            and{' '}
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: '#FEB139',
+                fontStyle: 'italic',
+              }}>
+              Lahu
+            </Text>
+            . One will be able to hear the dialect and view the ware of these
+            ethnicities at the vibrant central market and day-long hikes into
+            the mountains offer the chance to visit the ethnic villages and
+            interact with the inhabitants there.
           </Text>
         </View>
         {/* Image */}
@@ -77,13 +90,21 @@ function About({navigation}) {
             {'\t'}
             {'\t'}
             Another well-known place to visit in Keng Tung is
-            <Text style={{fontWeight: 'bold'}}> Naung Tong Lake</Text>.
-            According to a book written in 1930 that was a copy made from early
-            Gon Shan writings, Keng Tung was once a flooded area. Four hermits
-            who came down from the north drained the water from the flooded area
-            and after 7 years and 7 months, only a small lake remains. As the
-            water recedes Hermit Tonga built a pagoda on top of Swam Tong hill
-            and the pagoda is called Swam Kham Pagoda.
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: '#FEB139',
+                fontStyle: 'italic',
+              }}>
+              {' '}
+              Naung Tong Lake
+            </Text>
+            . According to a book written in 1930 that was a copy made from
+            early Gon Shan writings, Keng Tung was once a flooded area. Four
+            hermits who came down from the north drained the water from the
+            flooded area and after 7 years and 7 months, only a small lake
+            remains. As the water recedes Hermit Tonga built a pagoda on top of
+            Swam Tong hill and the pagoda is called Swam Kham Pagoda.
           </Text>
         </View>
         {/* Image */}

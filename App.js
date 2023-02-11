@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './screens/Login';
@@ -7,15 +7,31 @@ import Details from './screens/Details';
 import About from './screens/About';
 import COLORS from './assets/colors';
 import AddContent from './admin/addContent';
+import {HandleUpdate} from './admin/UpdateData';
+
+import auth from '@react-native-firebase/auth';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  //   const {user, setUser} = useContext(AuthContext);
+  //   const [initializing, setInitializing] = useState(true);
+  //   const onAuthStateChanged = user => {
+  //     setUser(user);
+  //     if (initializing) setInitializing(false);
+  //   };
+
+  //   useEffect(() => {
+  //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+  //     return subscriber; // unsubscribe on unmount
+  //   }, []);
+
+  //   if (initializing) return null;
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{gestureEnabled: false}}>
+      <Stack.Navigator>
         <Stack.Screen
-          name="Home"
+          name="Bottom"
           component={BottomNavigator}
           options={{headerShown: false}}
         />
@@ -23,6 +39,11 @@ const App = () => {
           name="Login"
           component={Login}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="handleUpdate"
+          component={HandleUpdate}
+          options={{title: 'Update Items'}}
         />
 
         <Stack.Screen name="Details" component={Details} />

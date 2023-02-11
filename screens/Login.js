@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,14 +9,41 @@ import {
   StatusBar,
   ImageBackground,
   TouchableOpacity,
-  KeyboardAvoidingView,
+  ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
+import {AuthContext} from '../navigation/AuthProvider';
+import ButtomNavigator from '../navigation/ButtomNavigator';
+import auth from '@react-native-firebase/auth';
 
 const bgImage = require('../assets/img/NongTong.jpg');
 
 export default function Login({navigation}) {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        navigation.replace('Bottom');
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleLogin = () => {
+    auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(userCredentials => {
+        <ActivityIndicator size="large" color="#00ff00" />;
+        const user = userCredentials.user;
+        console.log('Logged in with:', user.email);
+      })
+      .catch(error => alert(error.message));
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
@@ -37,6 +64,7 @@ export default function Login({navigation}) {
             placeholderTextColor="grey"
             autoCapitalize="none"
             autoFocus={true}
+            onChangeText={userEmail => setEmail(userEmail)}
           />
           <TextInput
             style={styles.input}
@@ -46,10 +74,9 @@ export default function Login({navigation}) {
             autoCorrect={false}
             secureTextEntry={true}
             textContentType="password"
+            onChangeText={userPassword => setPassword(userPassword)}
           />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Add')}>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text
               style={{
                 color: '#fff',

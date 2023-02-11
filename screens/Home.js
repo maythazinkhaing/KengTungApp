@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  RefreshControl,
 } from 'react-native';
 import COLORS from '../assets/colors';
 import About from './About';
@@ -19,24 +20,56 @@ import {dummyData} from '../jsonFiles/data';
 import {ScrollView} from 'react-native-gesture-handler';
 import database from '@react-native-firebase/database';
 import Login from './Login';
+import AddContent from '../admin/addContent';
+
+import auth from '@react-native-firebase/auth';
 
 const {width} = Dimensions.get('screen');
 
 const profile = require('../assets/img/logo.jpg');
 
-export default function Home({navigation}) {
+export default function HomeScreen({navigation}) {
   const [home, setHome] = useState(true);
   const [food, setFood] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [travel, setTravel] = useState([]);
   const [pagoda, setPagoda] = useState([]);
   const [hotel, setHotel] = useState([]);
+  const [name, setName] = useState('Welcome to Keng Tung!');
+  const [refreshing, setRefreshing] = React.useState(false);
+  let currentUser = auth().currentUser?.email;
+  // let a = [];
+  // const getRandomObject = array => {
+  //   const randomObject = array[Math.floor(Math.random() * 5)];
+  //   a.push(array[Math.floor(Math.random() * 5)]);
+  // };
+  // console.log('array of food ' + a);
+  // getRandomObject(food);
 
-  const getRandomObject = array => {
-    const randomObject = array[Math.floor(Math.random() * array.length)];
-    return randomObject;
+  const handleLogOut = async () => {
+    try {
+      await auth().signOut();
+      setName('Welcome to Keng Tung!');
+    } catch (e) {
+      console.log(e);
+    }
   };
-  let a = getRandomObject(food);
+
+  //currentUSer
+  useEffect(() => {
+    const userValid = async () => {
+      try {
+        if (currentUser) {
+          setName('ADMIN');
+        } else {
+          setName('Welcome to KengTung!');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    userValid();
+  }, []);
 
   //fetch All Food
   useEffect(() => {
@@ -47,13 +80,28 @@ export default function Home({navigation}) {
           .ref('/Items/')
           .orderByChild('Category_ID')
           .equalTo(1)
+          .limitToLast(5)
           .once('value')
+
           .then(response => {
             response.forEach(doc => {
-              const {Title, images} = doc.val();
+              const {
+                Title,
+                images,
+                Details,
+                Phone,
+                Address,
+                Short_Description,
+              } = doc.val();
+              const id = doc.key;
               Alldata.push({
                 title: Title,
-                image: images[0],
+                image: images,
+                detail: Details,
+                phone: Phone,
+                address: Address,
+                id: id,
+                Short_Description: Short_Description,
               });
             });
 
@@ -78,10 +126,23 @@ export default function Home({navigation}) {
           .once('value')
           .then(response => {
             response.forEach(doc => {
-              const {Title, images} = doc.val();
+              const {
+                Title,
+                images,
+                Details,
+                Phone,
+                Address,
+                Short_Description,
+              } = doc.val();
+              const id = doc.key;
               Alldata.push({
                 title: Title,
-                image: images[0],
+                image: images,
+                detail: Details,
+                phone: Phone,
+                address: Address,
+                id: id,
+                Short_Description: Short_Description,
               });
             });
 
@@ -106,10 +167,23 @@ export default function Home({navigation}) {
           .once('value')
           .then(response => {
             response.forEach(doc => {
-              const {Title, images} = doc.val();
+              const {
+                Title,
+                images,
+                Details,
+                Phone,
+                Address,
+                Short_Description,
+              } = doc.val();
+              const id = doc.key;
               Alldata.push({
                 title: Title,
-                image: images[0],
+                image: images,
+                detail: Details,
+                phone: Phone,
+                address: Address,
+                id: id,
+                Short_Description: Short_Description,
               });
             });
 
@@ -134,13 +208,25 @@ export default function Home({navigation}) {
           .once('value')
           .then(response => {
             response.forEach(doc => {
-              const {Title, images} = doc.val();
+              const {
+                Title,
+                images,
+                Details,
+                Phone,
+                Address,
+                Short_Description,
+              } = doc.val();
+              const id = doc.key;
               Alldata.push({
                 title: Title,
-                image: images[0],
+                image: images,
+                detail: Details,
+                phone: Phone,
+                address: Address,
+                id: id,
+                Short_Description: Short_Description,
               });
             });
-
             setHotel(Alldata);
           });
       } catch (e) {
@@ -150,18 +236,63 @@ export default function Home({navigation}) {
     fetchHotel();
   }, []);
 
-  const pressHandler = () => {
-    navigation.navigate(Details);
-  };
+  //fetch Pagodas
+  useEffect(() => {
+    const fetchHotel = async () => {
+      try {
+        const Alldata = [];
+        database()
+          .ref('/Items/')
+          .orderByChild('Category_ID')
+          .equalTo(4)
+          .once('value')
+          .then(response => {
+            response.forEach(doc => {
+              const {
+                Title,
+                images,
+                Details,
+                Phone,
+                Address,
+                Short_Description,
+              } = doc.val();
+              const id = doc.key;
+              Alldata.push({
+                title: Title,
+                image: images,
+                detail: Details,
+                phone: Phone,
+                address: Address,
+                id: id,
+                Short_Description: Short_Description,
+              });
+            });
+            setPagoda(Alldata);
+          });
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchHotel();
+  }, []);
+
   //foodcard
   const FoodCard = ({place}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={pressHandler}
+        onPress={() =>
+          navigation.navigate('Details', {
+            title: place.title,
+            images: place.image,
+            details: place.detail,
+            phone: place.phone,
+            address: place.address,
+          })
+        }
         style={styles.cover}>
         <ImageBackground
-          source={{uri: place.image}}
+          source={{uri: place.image[0]}}
           style={styles.ImgCard}></ImageBackground>
 
         <Text style={styles.Foodtitle}>{place.title}</Text>
@@ -173,10 +304,18 @@ export default function Home({navigation}) {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={pressHandler}
+        onPress={() =>
+          navigation.navigate('Details', {
+            title: place.title,
+            images: place.image,
+            details: place.detail,
+            phone: place.phone,
+            address: place.address,
+          })
+        }
         style={styles.Cardcover}>
         <ImageBackground
-          source={{uri: place.image}}
+          source={{uri: place.image[0]}}
           style={styles.LongImgCard}></ImageBackground>
         <Text style={styles.Foodtitle}>{place.title}</Text>
       </TouchableOpacity>
@@ -191,7 +330,7 @@ export default function Home({navigation}) {
           <Image source={profile} style={styles.profile} />
         </TouchableOpacity>
         <View>
-          <Text style={styles.title}>Welcome to KengTung!!</Text>
+          <Text style={styles.title}>{name}</Text>
           <Text style={{fontSize: 13, fontFamily: 'Nunito-Regular'}}>
             Explore Keng Tung...
           </Text>
@@ -239,6 +378,20 @@ export default function Home({navigation}) {
             </Text>
           </View>
         </TouchableOpacity>
+        {currentUser == 'maythazinkhaingmt@gmail.com' ? (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Add')}>
+              <View style={styles.navCon}>
+                <Text style={styles.navText}>Add Items</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogOut}>
+              <View style={styles.navCon}>
+                <Text style={styles.navText}>Log Out</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </View>
       {/* End Home Nav */}
       <View style={{backgroundColor: 'white', flex: 1}}>
@@ -262,7 +415,20 @@ export default function Home({navigation}) {
               horizontal
               showsHorizontalScrollIndicator={false}
               data={food}
-              renderItem={({item}) => <FoodCard place={item} />}
+              renderItem={({item}) => (
+                <FoodCard place={item} onPass={item.id} />
+              )}
+            />
+          </View>
+          {/* Pagodas Card */}
+          <View
+            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+            <Text style={styles.Rtitle}>Recommanded Restaurants</Text>
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={pagoda}
+              renderItem={({item}) => <Card place={item} />}
             />
           </View>
           {/* Restaurants Card */}
@@ -394,5 +560,14 @@ const styles = StyleSheet.create({
 
     borderRadius: 15,
     overflow: 'hidden',
+  },
+  navCon: {
+    borderRadius: 50,
+    paddingHorizontal: 8,
+  },
+  navText: {
+    padding: 8,
+    fontSize: 13,
+    color: COLORS.dark,
   },
 });

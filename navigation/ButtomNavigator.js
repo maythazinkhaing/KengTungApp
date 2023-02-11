@@ -1,12 +1,15 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Home from '../screens/Home';
 import COLORS from '../assets/colors';
 import Places from '../screens/Places';
 import Hotels from '../screens/Hotels';
 import Food from '../screens/Food';
 import Pagoda from '../screens/Pagoda';
+import HomeScreen from '../screens/Home';
+import TabFOOD from '../screens/homeCatTab';
+import {StatusBar} from 'react-native';
+import HomeCatTab from '../screens/homeCatTab';
 
 const Tab = createBottomTabNavigator();
 
@@ -70,7 +73,7 @@ const BottomNavigator = () => {
           );
         },
       })}>
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Food" component={Food} />
 
       <Tab.Screen name="Places" component={Places} />

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -17,92 +17,72 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
-import {Dropdown} from 'react-native-element-dropdown';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import COLORS from '../assets/colors';
 
-const AddContent = ({navigation}) => {
+export const HandleUpdate = ({route}) => {
   const [image, setImage] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-
-  //for dropDown
-  const [value, setValue] = useState(null);
-  const [Subvalue, setSubValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
-  const [isFocus1, setIsFocus1] = useState(false);
-  const [Category, setCategory] = useState([]);
-  const [SubCategory, setSubCategory] = useState([]);
 
   const [Title, setTitle] = useState(null);
   const [Address, setAddress] = useState(null);
   const [Phn, setPhn] = useState(null);
   const [Details, setDetails] = useState(null);
   const [Short, setShort] = useState(null);
+  const [DEL, setDEL] = useState('0');
+  const [Category, setCategory] = useState(null);
+  const [SubCategory, setSubCategory] = useState(null);
 
-  //dropdown action
-  database()
-    .ref('/Categories/')
-    .once('value')
-    .then(response => {
-      let c = [];
-      var r = Object.keys(response.val()).length;
-      for (var i = 1; i < r; i++) {
-        c.push({
-          label: response.val()[i],
-          value: i,
-        });
+  const ID = route.params.id;
+
+  console.log(ID);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const imageList = [];
+
+        database()
+          .ref(`Items/${ID}`)
+          .once('value')
+          .then(response => {
+            console.log(response.val());
+
+            const {
+              Title,
+              images,
+              Details,
+              Phone,
+              Address,
+              Short_Description,
+              Sub_Category,
+              Category_ID,
+            } = response.val();
+            setTitle(Title);
+            setDetails(Details);
+            setPhn(Phone);
+            setAddress(Address);
+            setShort(Short_Description);
+            setCategory(Category_ID);
+            setSubCategory(Sub_Category);
+            console.log('Images are :' + images);
+            images.map(image => {
+              imageList.push({
+                imageUri: image,
+              });
+            });
+
+            setImage(imageList);
+
+            console.log(image);
+          });
+      } catch (e) {
+        console.log(e);
       }
-
-      setCategory(c);
-    });
-
-  //handle sub Category DropDown
-  const handleSubCategory = catID => {
-    if (catID === 1) {
-      database()
-        .ref('SubCategories')
-        .orderByChild('catID')
-        .equalTo(1)
-        .once('value')
-        .then(response => {
-          let c = [];
-          var r = Object.keys(response.val()).length;
-          response.forEach(data =>
-            c.push({
-              label: data.val().name,
-              value: data.key,
-            }),
-          );
-          setSubCategory(c);
-        });
-    } else {
-      setSubCategory([{label: 'No Sub-Category', value: '0'}]);
-    }
-  };
-
-  const renderLabel = () => {
-    if (value || isFocus1) {
-      return (
-        <Text style={[styles.label, isFocus1 && {color: 'darkred'}]}>
-          Categories
-        </Text>
-      );
-    }
-    return null;
-  };
-
-  const renderLabel2 = () => {
-    if (Subvalue || isFocus) {
-      return (
-        <Text style={[styles.label, isFocus && {color: 'darkred'}]}>
-          Sub-Category
-        </Text>
-      );
-    }
-    return null;
-  };
-  //end Drop down
+    };
+    fetchData();
+  }, []);
 
   //choosePhoto
   const choosePhoto = () => {
@@ -128,50 +108,68 @@ const AddContent = ({navigation}) => {
 
   //submit Post
   const submitPost = async () => {
-    const imageURL = await uploadImage();
-    console.log(imageURL);
-    // console.log(value);
-    database()
-      .ref('/Items')
-      .once('value')
-      .then(response => {
-        var r = Object.keys(response.val()).length + 1;
-        let getID;
-        let subID;
-        if (value == 1) {
-          subID = Subvalue;
-        }
-        console.log('get ID is :' + getID);
-        console.log('get Item ID is :' + r);
+    console.log(DEL);
+    if (DEL == '1') {
+      const imageURL = await uploadImage();
+      console.log(imageURL);
 
-        const itemRef = database().ref('Items');
-        itemRef
-          .child('T' + r + '-' + Date.now())
-          .set({
-            Title: Title,
-            Details: Details,
-            Address: Address,
-            Phone: Phn,
-            images: imageURL,
-            Category_ID: value,
-            Sub_Category: subID,
-            Short_Description: Short,
-          })
-          .then(() => {
-            console.log('Complete Posted!');
-            setAddress(null);
-            setDetails(null);
-            setPhn(null);
-            setTitle(null);
-            setShort(null);
-          })
-          .catch(error => {
-            console.log(
-              'Something went wrong with added post to firestore.',
-              error,
-            );
-          });
-      });
+      database()
+        .ref(`/Items/${ID}`)
+        .update({
+          Category_ID: Category,
+          Sub_Category: SubCategory,
+          Title: Title,
+          Details: Details,
+          Address: Address,
+          Phone: Phn,
+          images: imageURL,
+
+          Short_Description: Short,
+        })
+        .then(() => {
+          console.log('Completely Updated!');
+          setAddress(null);
+          setDetails(null);
+          setPhn(null);
+          setTitle(null);
+          setShort(null);
+          setImage([]);
+        })
+        .catch(error => {
+          console.log(
+            'Something went wrong with update post to firestore.',
+            error,
+          );
+        });
+    } else {
+      database()
+        .ref(`/Items/${ID}`)
+        .update({
+          Category_ID: Category,
+          Sub_Category: SubCategory,
+          Title: Title,
+          Details: Details,
+          Address: Address,
+          Phone: Phn,
+
+          Short_Description: Short,
+        })
+        .then(() => {
+          console.log('Completely Updated!');
+          setAddress(null);
+          setDetails(null);
+          setPhn(null);
+          setTitle(null);
+          setShort(null);
+          setImage([]);
+        })
+        .catch(error => {
+          console.log(
+            'Something went wrong with update post to firestore.',
+            error,
+          );
+        });
+    }
   };
 
   //upload images to storage
@@ -224,59 +222,48 @@ const AddContent = ({navigation}) => {
     return url;
   };
 
+  //de
+  const Delete = () => {
+    console.log('Current ID is : ' + ID);
+    setDEL('1');
+    database()
+      .ref(`Items/${ID}`)
+      .once('value')
+      .then(doc => {
+        const {images} = doc.val();
+        console.log(' Image is : ' + images);
+        images.map(image => {
+          const storageRef = storage().refFromURL(image);
+          const imageRef = storage().ref(storageRef.fullPath);
+
+          imageRef
+            .delete()
+            .then(() => {
+              database()
+                .ref(`/Items/${ID}/images`)
+                .remove()
+                .then(() => {
+                  Alert.alert(
+                    'Images deleted!',
+                    'The image has been deleted successfully!',
+                  );
+                  setImage([]);
+                  setDEL('0');
+                })
+                .catch(e => console.log('Error deleting posst.', e));
+
+              console.log(`${image} has been deleted successfully.`);
+            })
+            .catch(e => {
+              console.log('Error while deleting the image. ', e);
+            });
+        });
+      });
+  };
+
   return (
     <SafeAreaView style={{backgroundColor: 'white', height: '100%'}}>
-      {/*  dropdown */}
-
-      <View style={styles.container}>
-        <View style={styles.DropdownContainer}>
-          {renderLabel()}
-          <Dropdown
-            style={[styles.dropdown, isFocus1 && {borderColor: 'darkred'}]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={Category}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Category' : '...'}
-            value={value}
-            onFocus={() => setIsFocus1(true)}
-            onBlur={() => setIsFocus1(false)}
-            onChange={item => {
-              setValue(item.value);
-              handleSubCategory(item.value);
-              setIsFocus1(false);
-            }}
-          />
-        </View>
-        <View style={styles.DropdownContainer}>
-          {renderLabel2()}
-          <Dropdown
-            style={[styles.dropdown, isFocus && {borderColor: 'darkred'}]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={SubCategory}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Sub-Category' : '...'}
-            value={Subvalue}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setSubValue(item.value);
-              setIsFocus(false);
-            }}
-          />
-        </View>
-      </View>
-      {/* dropdown */}
-      <View>
+      <View style={{paddingTop: 10}}>
         <TextInput
           style={styles.input}
           placeholder="Title"
@@ -324,6 +311,9 @@ const AddContent = ({navigation}) => {
         <TouchableOpacity style={styles.btn}>
           <Button onPress={choosePhoto} title="Choose Pics" color="black" />
         </TouchableOpacity>
+        <TouchableOpacity style={styles.btn}>
+          <Button onPress={() => Delete()} title="Reset Photo" color="black" />
+        </TouchableOpacity>
         {uploading ? (
           <View>
             <Text>{transferred} % Completed!</Text>
@@ -331,7 +321,7 @@ const AddContent = ({navigation}) => {
           </View>
         ) : (
           <View style={styles.btn}>
-            <Button onPress={submitPost} title="ADD" color="black" />
+            <Button onPress={submitPost} title="UPDATE ITEM" color="black" />
           </View>
         )}
       </View>
@@ -352,7 +342,7 @@ const AddContent = ({navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   input: {
     height: 50,
     margin: 20,
@@ -431,5 +421,3 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
-export default AddContent;

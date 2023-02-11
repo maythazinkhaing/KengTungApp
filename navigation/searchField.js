@@ -1,9 +1,10 @@
 import {Text, TextInput, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import colors from '../assets/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function SearchField() {
+export default function SearchField({text}) {
+  const [input, setInput] = useState('');
   return (
     <View
       style={{
@@ -34,6 +35,7 @@ export default function SearchField() {
         }}
         placeholder="Search..."
         placeholderTextColor={colors.grayLight}
+        onChangeText={text => setInput(text)}
       />
     </View>
   );

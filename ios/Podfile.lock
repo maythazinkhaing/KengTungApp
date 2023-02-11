@@ -9,6 +9,9 @@ PODS:
     - React-Core (= 0.70.6)
     - React-jsi (= 0.70.6)
     - ReactCommon/turbomodule/core (= 0.70.6)
+  - Firebase/Auth (10.3.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 10.3.0)
   - Firebase/CoreOnly (10.3.0):
     - FirebaseCore (= 10.3.0)
   - Firebase/Database (10.3.0):
@@ -18,6 +21,11 @@ PODS:
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.3.0)
   - FirebaseAppCheckInterop (10.4.0)
+  - FirebaseAuth (10.3.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - FirebaseAuthInterop (10.4.0)
   - FirebaseCore (10.3.0):
     - FirebaseCoreInternal (~> 10.0)
@@ -38,15 +46,34 @@ PODS:
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - fmt (6.2.1)
   - glog (0.3.5)
+  - GoogleUtilities/AppDelegateSwizzler (7.11.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
   - GoogleUtilities/Environment (7.11.0):
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.11.0):
     - GoogleUtilities/Environment
+  - GoogleUtilities/Network (7.11.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (7.11.0)"
+  - GoogleUtilities/Reachability (7.11.0):
+    - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (3.1.0)
   - hermes-engine (0.70.6)
   - leveldb-library (1.22.1)
   - libevent (2.1.12)
+  - libwebp (1.2.4):
+    - libwebp/demux (= 1.2.4)
+    - libwebp/mux (= 1.2.4)
+    - libwebp/webp (= 1.2.4)
+  - libwebp/demux (1.2.4):
+    - libwebp/webp
+  - libwebp/mux (1.2.4):
+    - libwebp/demux
+  - libwebp/webp (1.2.4)
   - PromisesObjC (2.1.1)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -348,14 +375,22 @@ PODS:
     - React-jsi (= 0.70.6)
     - React-logger (= 0.70.6)
     - React-perflogger (= 0.70.6)
-  - RNFBApp (16.5.1):
+  - RNFastImage (8.6.3):
+    - React-Core
+    - SDWebImage (~> 5.11.1)
+    - SDWebImageWebPCoder (~> 0.8.4)
+  - RNFBApp (16.7.0):
     - Firebase/CoreOnly (= 10.3.0)
     - React-Core
-  - RNFBDatabase (16.5.1):
+  - RNFBAuth (16.7.0):
+    - Firebase/Auth (= 10.3.0)
+    - React-Core
+    - RNFBApp
+  - RNFBDatabase (16.7.0):
     - Firebase/Database (= 10.3.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (16.5.1):
+  - RNFBStorage (16.7.0):
     - Firebase/Storage (= 10.3.0)
     - React-Core
     - RNFBApp
@@ -375,6 +410,12 @@ PODS:
     - React-RCTImage
   - RNVectorIcons (9.2.0):
     - React-Core
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.5):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.10)
   - TOCropViewController (2.6.1)
   - Yoga (1.14.0)
 
@@ -416,7 +457,9 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -429,6 +472,7 @@ SPEC REPOS:
   trunk:
     - Firebase
     - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseCoreExtension
@@ -440,7 +484,10 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - libevent
+    - libwebp
     - PromisesObjC
+    - SDWebImage
+    - SDWebImageWebPCoder
     - TOCropViewController
 
 EXTERNAL SOURCES:
@@ -514,8 +561,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNFastImage:
+    :path: "../node_modules/react-native-fast-image"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
+  RNFBAuth:
+    :path: "../node_modules/@react-native-firebase/auth"
   RNFBDatabase:
     :path: "../node_modules/@react-native-firebase/database"
   RNFBStorage:
@@ -538,6 +589,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: dd1186fd05255e3457baa2f4ca65e94c2cd1e3ac
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
   FirebaseAppCheckInterop: ef074633831a90cf6c10e8f2c1e1f8b7842a446a
+  FirebaseAuth: 0e415d29d846c1dce2fb641e46f35e9888d9bec6
   FirebaseAuthInterop: fef284922da3c350f846ff85cc0dfd5186448e49
   FirebaseCore: 988754646ab3bd4bdcb740f1bfe26b9f6c0d5f2a
   FirebaseCoreExtension: d209ada6f48bac53d149e996cf1b2dafa632a615
@@ -551,6 +603,7 @@ SPEC CHECKSUMS:
   hermes-engine: 2af7b7a59128f250adfd86f15aa1d5a2ecd39995
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: e1866f61af7049eb3d8e08e8b133abd38bc1ca7a
@@ -581,13 +634,17 @@ SPEC CHECKSUMS:
   React-RCTVibration: c75ceef7aa60a33b2d5731ebe5800ddde40cefc4
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
-  RNFBApp: 6815ebf7845545e138e7dcd32e2b0a93012f392f
-  RNFBDatabase: 02df351a2b6992d61e8c63028643b5d3a4ded026
-  RNFBStorage: 40a6eb078f4ed218bc3d87eb0989750f6dc85dd6
+  RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
+  RNFBApp: aecfcdc0964d9bc0c5f7ba05efb50be724d8e8b3
+  RNFBAuth: e9d85018f54b3eb50f5031e2d76a833943b14205
+  RNFBDatabase: efc47c8098c2f54ddd4bf65cfc99773868619770
+  RNFBStorage: fda61a639bc8d2c0bb8e9bfca054b58583e3dc15
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNImageCropPicker: ffbba608264885c241cbf3a8f78eb7aeeb978241
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
 

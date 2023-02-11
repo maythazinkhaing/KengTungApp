@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,7 +6,7 @@ import {
   Dimensions,
   StatusBar,
   View,
-  Pressable,
+  RefreshControl,
   FlatList,
   ScrollView,
   ImageBackground,
@@ -15,16 +15,29 @@ import {
 import database from '@react-native-firebase/database';
 import COLORS from '../assets/colors';
 import SearchField from '../navigation/searchField';
-import Details from './Details';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {handleDelete} from '../admin/AuthProvider';
+import HomeCatTab from './homeCatTab';
+
+import auth from '@react-native-firebase/auth';
 
 function Food({navigation}) {
   const [SubCategory, setSubCategory] = useState([]);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState('S1');
   const [post, setPost] = useState([]);
+  const [activeTab, setActiveTab] = useState('Shan Noodle');
 
-  const pressHandler = () => {
-    navigation.navigate(Details);
-  };
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  let currentUser = auth().currentUser?.email;
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+    fetchData();
+  }, []);
 
   //navBar {fetch Data}
   database()
@@ -45,67 +58,45 @@ function Food({navigation}) {
       setSubCategory(c);
     });
 
-  // //fetchAllFood
-  // useEffect(() => {
-  //   const fetchAll = async () => {
-  //     try {
-  //       const Alldata = [];
-  //       database()
-  //         .ref('/Items/')
-  //         .once('value')
-  //         .then(response => {
-  //           response.forEach(doc => {
-  //             const {Title, images} = doc.val();
-  //             Alldata.push({
-  //               title: Title,
-  //               image: images[0],
-  //             });
-  //           });
-
-  //           setPost(Alldata);
-  //         });
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
-  //   fetchAll();
-  // }, []);
-
   // fetchFoodData;
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dataList = [];
-        const i = selectedCategoryIndex;
-        database()
-          .ref('Items')
-          .orderByChild('Sub_Category')
-          .equalTo(i)
-          .once('value')
-          .then(response => {
-            // console.log(response.val());
-            response.forEach(doc => {
-              const {Title, images, Details, Phone, Address} = doc.val();
 
-              dataList.push({
-                title: Title,
-                image: images,
-                detail: Details,
-                phone: Phone,
-                address: Address,
-              });
+  const fetchData = async () => {
+    try {
+      const dataList = [];
+      const i = selectedCategoryIndex;
+      database()
+        .ref('Items')
+        .orderByChild('Sub_Category')
+        .equalTo(i)
+        .once('value')
+        .then(response => {
+          // console.log(response.val());
+          response.forEach(doc => {
+            const {Title, images, Details, Phone, Address, Short_Description} =
+              doc.val();
+            const id = doc.key;
+            dataList.push({
+              title: Title,
+              image: images,
+              detail: Details,
+              phone: Phone,
+              address: Address,
+              id: id,
+              Short_Description: Short_Description,
             });
-
-            setPost(dataList);
           });
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, [selectedCategoryIndex]);
 
-  const Card = ({place}) => {
+          setPost(dataList);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [selectedCategoryIndex, post]);
+
+  const Card = ({place, onDelete}) => {
     return (
       <TouchableOpacity
         onPress={() =>
@@ -115,12 +106,48 @@ function Food({navigation}) {
             details: place.detail,
             phone: place.phone,
             address: place.address,
+            Short_Description: place.Short_Description,
           })
         }
         style={styles.cover}>
         <ImageBackground
           style={styles.ImgCard}
-          source={{uri: place.image[0]}}></ImageBackground>
+          source={{uri: place.image[0]}}
+        />
+        {currentUser == 'maythazinkhaingmt@gmail.com' ? (
+          <View
+            style={{
+              position: 'absolute',
+              flex: 1,
+              alignSelf: 'flex-end',
+              right: 10,
+              top: 10,
+            }}>
+            {/* Delete item */}
+            <TouchableOpacity style={styles.crossButton}>
+              <Icon
+                style={{top: -1, right: -0.9}}
+                name="trash-outline"
+                size={18}
+                color={'white'}
+                onPress={() => onDelete(place.id)}
+              />
+            </TouchableOpacity>
+            {/* Edit Items */}
+            <TouchableOpacity
+              style={styles.crossButton}
+              onPress={() =>
+                navigation.navigate('handleUpdate', {id: place.id})
+              }>
+              <Icon
+                name="ios-create"
+                size={18}
+                color={COLORS.white}
+                style={{top: -1, right: -0.9}}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : null}
         <Text style={styles.title}>{place.title}</Text>
       </TouchableOpacity>
     );
@@ -145,6 +172,7 @@ function Food({navigation}) {
           shadowRadius: 1,
         }}>
         <SearchField />
+        {/* <HomeCatTab activeTab={activeTab} setActiveTab={setActiveTab} /> */}
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -182,15 +210,25 @@ function Food({navigation}) {
         </ScrollView>
       </View>
       <View
+        style={{backgroundColor: 'white', alignItems: 'center', padding: 10}}>
+        <Text style={{color: COLORS.base}}>
+          Explore Popular KengTung's Local Food Here!
+        </Text>
+      </View>
+      <View
         style={{
           flex: 1,
           backgroundColor: COLORS.white,
         }}>
         <FlatList
           contentContainerStyle={styles.flatContainer}
+          scrollEnabled
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           style={styles.shadow}
           data={post}
-          renderItem={({item}) => <Card place={item} />}
+          renderItem={({item}) => <Card place={item} onDelete={handleDelete} />}
           numColumns={2}
           columnWrapperStyle={{justifyContent: 'space-between'}}
         />
@@ -241,11 +279,29 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderRadius: 15,
     width: '49%',
+    shadowColor: '#171717',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
   },
   flatContainer: {
     flex: 1,
     padding: 10,
     // backgroundColor: 'red',
+  },
+  crossButton: {
+    padding: 8,
+    alignSelf: 'center',
+    backgroundColor: 'black',
+    marginBottom: 4,
+    borderRadius: 7,
+    opacity: 0.8,
+  },
+  scrollView: {
+    flex: 1,
+
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
