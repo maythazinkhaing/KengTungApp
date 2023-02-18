@@ -95,7 +95,7 @@ export const HandleUpdate = ({route}) => {
       .then(images => {
         console.log(images);
         images.map(image => {
-          const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+          const imageUri = image.path;
           imageList.push({
             imageUri,
           });
@@ -213,7 +213,7 @@ export const HandleUpdate = ({route}) => {
         // const url[] = await storageRef.getDownloadURL();
 
         setUploading(false);
-        Alert.alert('Completely Uploaded New Item...');
+        Alert.alert('Completely Updated Item...');
         setImage([]);
       } catch (error) {
         console.log(error);
@@ -248,7 +248,6 @@ export const HandleUpdate = ({route}) => {
                     'The image has been deleted successfully!',
                   );
                   setImage([]);
-                  setDEL('0');
                 })
                 .catch(e => console.log('Error deleting posst.', e));
 

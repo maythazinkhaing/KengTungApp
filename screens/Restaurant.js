@@ -19,6 +19,7 @@ import database from '@react-native-firebase/database';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {handleDelete} from '../admin/AuthProvider';
 import {useIsFocused} from '@react-navigation/native';
+import LottieScreen from '../navigation/lottie';
 
 import auth from '@react-native-firebase/auth';
 
@@ -27,6 +28,7 @@ export default function Travel({navigation}) {
   const [post, setPost] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(true);
 
   function FocusAwareStatusBar(props) {
     const isFocused = useIsFocused();
@@ -77,6 +79,9 @@ export default function Travel({navigation}) {
   };
   useEffect(() => {
     fetchData();
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   }, []);
 
   const Card = ({place, onDelete}) => {
@@ -199,22 +204,26 @@ export default function Travel({navigation}) {
           </TouchableOpacity>
         ) : null}
       </View>
-      <FlatList
-        scrollEnabled
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.shadow}
-        data={post}
-        renderItem={({item}) => {
-          if (input == '') {
-            return <Card place={item} onDelete={handleDelete} />;
+      {loading ? (
+        <LottieScreen />
+      ) : (
+        <FlatList
+          scrollEnabled
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
-            return <Card place={item} onDelete={handleDelete} />;
-          }
-        }}
-      />
+          style={styles.shadow}
+          data={post}
+          renderItem={({item}) => {
+            if (input == '') {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+            if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

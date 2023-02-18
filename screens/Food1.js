@@ -17,15 +17,65 @@ import COLORS from '../assets/colors';
 import SearchField from '../navigation/searchField';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {handleDelete} from '../admin/AuthProvider';
-import LottieScreen from '../navigation/lottie';
+import HomeLottieScreen from '../navigation/HomeLottie';
 import auth from '@react-native-firebase/auth';
 
-function Food({navigation}) {
-  const [SubCategory, setSubCategory] = useState([]);
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState('S1');
+const category = [
+  {
+    status: 'All',
+    key: 1,
+  },
+  {
+    status: 'Shan Noodle',
+    key: 2,
+  },
+  {
+    status: 'Sticky Rice',
+    key: 3,
+  },
+  {
+    status: 'Khao Phun',
+    key: 4,
+  },
+  {
+    status: 'Local Food',
+    key: 5,
+  },
+  {
+    status: 'Dessert',
+    key: 6,
+  },
+];
+
+function Food1({navigation}) {
+  const [status, setStatus] = useState('All');
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState('');
+  const [activeTab, setActiveTab] = useState(true);
+  const [data, setData] = useState(post);
+  const statusFilter = status => {
+    if (status == 'All') {
+      setData(post);
+    } else if (status == 'Shan Noodle') {
+      console.log(status);
+      setData([...post.filter(e => e.Sub_Category == 'S1')]);
+    } else if (status == 'Sticky Rice') {
+      console.log(status);
+      setData([...post.filter(e => e.Sub_Category == 'S2')]);
+    } else if (status == 'Khao Phun') {
+      console.log(status);
+      setData([...post.filter(e => e.Sub_Category == 'S3')]);
+    } else if (status == 'Local Food') {
+      console.log(status);
+      setData([...post.filter(e => e.Sub_Category == 'S4')]);
+    } else if (status == 'Dessert') {
+      console.log(status);
+      setData([...post.filter(e => e.Sub_Category == 'S5')]);
+    }
+
+    setStatus(status);
+  };
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -36,46 +86,33 @@ function Food({navigation}) {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-    fetchData();
   }, []);
-
-  //navBar {fetch Data}
-  database()
-    .ref('SubCategories')
-    .orderByChild('catID')
-    .equalTo(1)
-    .once('value')
-    .then(response => {
-      let c = [];
-      var r = Object.keys(response.val()).length;
-      response.forEach(data => {
-        c.push({
-          name: data.val().name,
-          index: data.key,
-        });
-      });
-
-      setSubCategory(c);
-    });
 
   // fetchFoodData;
 
   const fetchData = async () => {
     try {
-      const dataList = [];
-      const i = selectedCategoryIndex;
+      // const dataList = [];
+
       database()
         .ref('Items')
-        .orderByChild('Sub_Category')
-        .equalTo(i)
+        .orderByChild('Category_ID')
+        .equalTo(1)
         .once('value')
         .then(response => {
           // console.log(response.val());
           response.forEach(doc => {
-            const {Title, images, Details, Phone, Address, Short_Description} =
-              doc.val();
+            const {
+              Title,
+              images,
+              Details,
+              Phone,
+              Address,
+              Short_Description,
+              Sub_Category,
+            } = doc.val();
             const id = doc.key;
-            dataList.push({
+            post.push({
               title: Title,
               image: images,
               detail: Details,
@@ -83,10 +120,11 @@ function Food({navigation}) {
               address: Address,
               id: id,
               Short_Description: Short_Description,
+              Sub_Category: Sub_Category,
             });
           });
 
-          setPost(dataList);
+          // setPost(dataList);
           setTimeout(() => {
             setLoading(false);
           }, 2000);
@@ -97,7 +135,7 @@ function Food({navigation}) {
   };
   useEffect(() => {
     fetchData();
-  }, [selectedCategoryIndex]);
+  }, []);
 
   const Card = ({place, onDelete}) => {
     return (
@@ -219,37 +257,25 @@ function Food({navigation}) {
           ) : null}
         </View>
         {/* <HomeCatTab activeTab={activeTab} setActiveTab={setActiveTab} /> */}
-
-        <FlatList
-          contentContainerStyle={styles.navBar}
-          data={SubCategory}
-          renderItem={({item}) => (
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={{marginVertical: 15, marginHorizontal: 20}}>
+          {category.map(e => (
             <TouchableOpacity
+              style={[styles.inactive, status === e.status && styles.Bgactive]}
               activeOpacity={0.8}
-              onPress={() => setSelectedCategoryIndex(item.index)}>
-              <View
-                style={{
-                  backgroundColor:
-                    selectedCategoryIndex == item.index
-                      ? COLORS.white
-                      : COLORS.base,
-
-                  ...styles.textBorder,
-                }}>
-                <Text
-                  style={{
-                    color:
-                      selectedCategoryIndex == item.index
-                        ? COLORS.base
-                        : COLORS.dark,
-                    ...styles.navItem,
-                  }}>
-                  {item.name}
-                </Text>
-              </View>
+              onPress={() => statusFilter(e.status)}>
+              <Text
+                style={[
+                  styles.inactive,
+                  status === e.status && styles.TextActive,
+                ]}>
+                {e.status}
+              </Text>
             </TouchableOpacity>
-          )}
-        />
+          ))}
+        </ScrollView>
       </View>
       <View
         style={{backgroundColor: 'white', alignItems: 'center', padding: 10}}>
@@ -258,7 +284,7 @@ function Food({navigation}) {
         </Text>
       </View>
       {loading ? (
-        <LottieScreen />
+        <HomeLottieScreen />
       ) : (
         <View
           style={{
@@ -266,21 +292,26 @@ function Food({navigation}) {
             backgroundColor: COLORS.white,
           }}>
           <FlatList
-            contentContainerStyle={styles.flatContainer}
             scrollEnabled
+            contentContainerStyle={styles.flatContainer}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             style={styles.shadow}
-            data={post}
-            renderItem={({item}) => {
+            keyExtractor={(e, i) => i.toString()}
+            data={data}
+            renderItem={({item, index}) => {
               if (input == '') {
-                return <Card place={item} onDelete={handleDelete} />;
+                return (
+                  <Card place={item} key={index} onDelete={handleDelete} />
+                );
               }
               if (
                 item.title.toLowerCase().includes(input.toLocaleLowerCase())
               ) {
-                return <Card place={item} onDelete={handleDelete} />;
+                return (
+                  <Card place={item} key={index} onDelete={handleDelete} />
+                );
               }
             }}
             numColumns={2}
@@ -340,7 +371,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   flatContainer: {
-    flex: 1,
     padding: 10,
     // backgroundColor: 'red',
   },
@@ -358,6 +388,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  Bgactive: {
+    backgroundColor: COLORS.white,
+  },
+  TextActive: {
+    color: COLORS.base,
+  },
+  inactive: {
+    color: 'white',
+    margin: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 20,
+  },
 });
 
-export default Food;
+export default Food1;

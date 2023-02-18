@@ -15,12 +15,13 @@ import {
 import COLORS from '../assets/colors';
 import About from './About';
 import Carousel from '../navigation/Carousel';
-import Details from './Details';
+
 import {dummyData} from '../jsonFiles/data';
 import {ScrollView} from 'react-native-gesture-handler';
 import database from '@react-native-firebase/database';
 import Login from './Login';
 import AddContent from '../admin/addContent';
+import HomeLottieScreen from '../navigation/HomeLottie';
 
 import auth from '@react-native-firebase/auth';
 
@@ -37,6 +38,8 @@ export default function HomeScreen({navigation}) {
   const [hotel, setHotel] = useState([]);
   const [name, setName] = useState('Welcome to Keng Tung!');
   const [refreshing, setRefreshing] = React.useState(false);
+  const [loading, setLoading] = useState(true);
+
   let currentUser = auth().currentUser?.email;
   // let a = [];
   // const getRandomObject = array => {
@@ -106,6 +109,9 @@ export default function HomeScreen({navigation}) {
             });
 
             setFood(Alldata);
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
           });
       } catch (e) {
         console.log(e);
@@ -394,78 +400,83 @@ export default function HomeScreen({navigation}) {
         ) : null}
       </View>
       {/* End Home Nav */}
-      <View style={{backgroundColor: 'white', flex: 1}}>
-        <View
-          style={{
-            backgroundColor: COLORS.base,
-            height: 10,
-            width: '100%',
-            borderBottomRightRadius: 40,
-            borderBottomLeftRadius: 40,
-          }}></View>
-        <ScrollView>
-          <View>
-            <Carousel data={dummyData} />
-          </View>
-          {/* food card */}
+      {loading ? (
+        <HomeLottieScreen />
+      ) : (
+        <View style={{backgroundColor: 'white', flex: 1}}>
           <View
-            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
-            <Text style={styles.Rtitle}>Recommanded Food</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={food}
-              renderItem={({item}) => (
-                <FoodCard place={item} onPass={item.id} />
-              )}
-            />
-          </View>
-          {/* Pagodas Card */}
-          <View
-            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
-            <Text style={styles.Rtitle}>Recommanded Restaurants</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={pagoda}
-              renderItem={({item}) => <Card place={item} />}
-            />
-          </View>
-          {/* Restaurants Card */}
-          <View
-            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
-            <Text style={styles.Rtitle}>Recommanded Restaurants</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={restaurants}
-              renderItem={({item}) => <Card place={item} />}
-            />
-          </View>
-          {/* Travel Card */}
-          <View
-            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
-            <Text style={styles.Rtitle}>Recommanded Travel Places</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={travel}
-              renderItem={({item}) => <Card place={item} />}
-            />
-          </View>
-          {/* Hotel Card */}
-          <View
-            style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
-            <Text style={styles.Rtitle}>Recommanded Hotels</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={hotel}
-              renderItem={({item}) => <Card place={item} />}
-            />
-          </View>
-        </ScrollView>
-      </View>
+            style={{
+              backgroundColor: COLORS.base,
+              height: 10,
+              width: '100%',
+              borderBottomRightRadius: 40,
+              borderBottomLeftRadius: 40,
+            }}></View>
+
+          <ScrollView>
+            <View>
+              <Carousel data={dummyData} />
+            </View>
+            {/* food card */}
+            <View
+              style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+              <Text style={styles.Rtitle}>Recommanded Food</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={food}
+                renderItem={({item}) => (
+                  <FoodCard place={item} onPass={item.id} />
+                )}
+              />
+            </View>
+            {/* Pagodas Card */}
+            <View
+              style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+              <Text style={styles.Rtitle}>Recommanded Pagodas</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={pagoda}
+                renderItem={({item}) => <Card place={item} />}
+              />
+            </View>
+            {/* Restaurants Card */}
+            <View
+              style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+              <Text style={styles.Rtitle}>Recommanded Restaurants</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={restaurants}
+                renderItem={({item}) => <Card place={item} />}
+              />
+            </View>
+            {/* Travel Card */}
+            <View
+              style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+              <Text style={styles.Rtitle}>Recommanded Travel Places</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={travel}
+                renderItem={({item}) => <Card place={item} />}
+              />
+            </View>
+            {/* Hotel Card */}
+            <View
+              style={{padding: 20, height: '100%', flex: 1, paddingBottom: 0}}>
+              <Text style={styles.Rtitle}>Recommanded Hotels</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={hotel}
+                renderItem={({item}) => <Card place={item} />}
+              />
+            </View>
+          </ScrollView>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

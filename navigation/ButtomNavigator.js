@@ -4,12 +4,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import COLORS from '../assets/colors';
 import Places from '../screens/Places';
 import Hotels from '../screens/Hotels';
-import Food from '../screens/Food';
+import Food1 from '../screens/Food1';
 import Pagoda from '../screens/Pagoda';
 import HomeScreen from '../screens/Home';
-import TabFOOD from '../screens/homeCatTab';
-import {StatusBar} from 'react-native';
-import HomeCatTab from '../screens/homeCatTab';
+
+import Food from '../screens/Food';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,7 +73,7 @@ const BottomNavigator = () => {
         },
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Food" component={Food} />
+      <Tab.Screen name="Food" component={Food1} />
 
       <Tab.Screen name="Places" component={Places} />
       <Tab.Screen name="Pagodas" component={Pagoda} />

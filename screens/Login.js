@@ -13,20 +13,25 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {AuthContext} from '../navigation/AuthProvider';
-import ButtomNavigator from '../navigation/ButtomNavigator';
 import auth from '@react-native-firebase/auth';
+import Lottie from '../navigation/lottie';
+import COLORS from '../assets/colors';
+import LottieScreen from '../navigation/lottie';
 
 const bgImage = require('../assets/img/NongTong.jpg');
 
 export default function Login({navigation}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
-        navigation.replace('Bottom');
+        setTimeout(() => {
+          setLoading(false);
+          navigation.replace('Bottom');
+        }, 2000);
       }
     });
 
@@ -34,60 +39,68 @@ export default function Login({navigation}) {
   }, []);
 
   const handleLogin = () => {
+    setLoading(true);
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(userCredentials => {
         <ActivityIndicator size="large" color="#00ff00" />;
+
         const user = userCredentials.user;
         console.log('Logged in with:', user.email);
       })
-      .catch(error => alert(error.message));
+      .catch(error => {
+        alert(error.message);
+        setLoading(false);
+      });
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar translucent backgroundColor="rgba(0,0,0,0.2)" />
+      {loading ? (
+        <LottieScreen />
+      ) : (
+        <SafeAreaView style={styles.container}>
+          <StatusBar translucent backgroundColor="rgba(0,0,0,0.2)" />
 
-        <ImageBackground source={bgImage} style={styles.bg}>
-          <View style={styles.overlay} />
-          <Text style={styles.BigTiltle}>KengTung</Text>
-        </ImageBackground>
+          <ImageBackground source={bgImage} style={styles.bg}>
+            <View style={styles.overlay} />
+            <Text style={styles.BigTiltle}>KengTung</Text>
+          </ImageBackground>
 
-        <View style={styles.whiteSheet} />
+          <View style={styles.whiteSheet} />
 
-        <SafeAreaView style={styles.form}>
-          <Text style={styles.title}>log In</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Email"
-            placeholderTextColor="grey"
-            autoCapitalize="none"
-            autoFocus={true}
-            onChangeText={userEmail => setEmail(userEmail)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter password"
-            placeholderTextColor="grey"
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            textContentType="password"
-            onChangeText={userPassword => setPassword(userPassword)}
-          />
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text
-              style={{
-                color: '#fff',
-                fontSize: 17,
-                fontFamily: 'Nunito-Regular',
-              }}>
-              {' '}
-              Log In
-            </Text>
-          </TouchableOpacity>
-          {/* <View
+          <SafeAreaView style={styles.form}>
+            <Text style={styles.title}>log In</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Email"
+              placeholderTextColor="grey"
+              autoCapitalize="none"
+              autoFocus={true}
+              onChangeText={userEmail => setEmail(userEmail)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter password"
+              placeholderTextColor="grey"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry={true}
+              textContentType="password"
+              onChangeText={userPassword => setPassword(userPassword)}
+            />
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: 17,
+                  fontFamily: 'Nunito-Regular',
+                }}>
+                {' '}
+                Log In
+              </Text>
+            </TouchableOpacity>
+            {/* <View
             style={{
               marginTop: 15,
               marginBottom: 30,
@@ -110,7 +123,7 @@ export default function Login({navigation}) {
               </Text>
             </TouchableOpacity>
           </View> */}
-          {/* <TouchableOpacity
+            {/* <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Home')}>
             <Text
@@ -122,8 +135,9 @@ export default function Login({navigation}) {
               Log In as a Guest
             </Text>
           </TouchableOpacity> */}
+          </SafeAreaView>
         </SafeAreaView>
-      </SafeAreaView>
+      )}
     </TouchableWithoutFeedback>
   );
 }

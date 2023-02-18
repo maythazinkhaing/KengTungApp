@@ -20,6 +20,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {handleDelete} from '../admin/AuthProvider';
 import auth from '@react-native-firebase/auth';
 import {useIsFocused} from '@react-navigation/native';
+import LottieScreen from '../navigation/lottie';
 
 // Travel
 export default function Hotels({navigation}) {
@@ -72,9 +73,9 @@ export default function Hotels({navigation}) {
 
           setPost(dataList);
 
-          if (loading) {
+          setTimeout(() => {
             setLoading(false);
-          }
+          }, 2000);
         });
     } catch (e) {
       console.log(e);
@@ -226,23 +227,26 @@ export default function Hotels({navigation}) {
           </TouchableOpacity>
         ) : null}
       </View>
-
-      <FlatList
-        scrollEnabled
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.shadow}
-        data={post}
-        renderItem={({item}) => {
-          if (input == '') {
-            return <Card place={item} onDelete={handleDelete} />;
+      {loading ? (
+        <LottieScreen />
+      ) : (
+        <FlatList
+          scrollEnabled
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
-            return <Card place={item} onDelete={handleDelete} />;
-          }
-        }}
-      />
+          style={styles.shadow}
+          data={post}
+          renderItem={({item}) => {
+            if (input == '') {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+            if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

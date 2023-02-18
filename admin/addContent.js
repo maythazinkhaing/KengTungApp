@@ -115,7 +115,7 @@ const AddContent = ({navigation}) => {
       .then(images => {
         console.log(images);
         images.map(image => {
-          const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+          const imageUri = image.path;
           imageList.push({
             imageUri,
           });

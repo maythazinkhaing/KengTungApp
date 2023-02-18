@@ -21,12 +21,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {handleDelete} from '../admin/AuthProvider';
 import auth from '@react-native-firebase/auth';
 import {useIsFocused} from '@react-navigation/native';
+import HomeLottieScreen from '../navigation/HomeLottie';
 
 // Travel
 export default function Travel({navigation}) {
   const [post, setPost] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(true);
   let currentUser = auth().currentUser?.email;
 
   function FocusAwareStatusBar(props) {
@@ -69,6 +71,9 @@ export default function Travel({navigation}) {
           });
 
           setPost(dataList);
+          setTimeout(() => {
+            setLoading(false);
+          }, 2000);
         });
     } catch (e) {
       console.log(e);
@@ -196,23 +201,26 @@ export default function Travel({navigation}) {
           </TouchableOpacity>
         ) : null}
       </View>
-
-      <FlatList
-        scrollEnabled
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.shadow}
-        data={post}
-        renderItem={({item}) => {
-          if (input == '') {
-            return <Card place={item} onDelete={handleDelete} />;
+      {loading ? (
+        <HomeLottieScreen />
+      ) : (
+        <FlatList
+          scrollEnabled
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
-            return <Card place={item} onDelete={handleDelete} />;
-          }
-        }}
-      />
+          style={styles.shadow}
+          data={post}
+          renderItem={({item}) => {
+            if (input == '') {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+            if (item.title.toLowerCase().includes(input.toLocaleLowerCase())) {
+              return <Card place={item} onDelete={handleDelete} />;
+            }
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

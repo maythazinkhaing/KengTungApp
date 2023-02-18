@@ -47,7 +47,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Location is needed</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>KengTung app needs photos library access.</string>
 	<key>UIAppFonts</key>

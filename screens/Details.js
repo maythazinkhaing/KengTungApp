@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
 const {width, height} = Dimensions.get('window');
 import COLORS from '../assets/colors';
 import {dummyData} from '../jsonFiles/data';
@@ -29,6 +36,11 @@ function Details({route}) {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <StatusBar
+        translucent={false}
+        backgroundColor="white"
+        barStyle={'dark-content'}
+      />
       <ScrollView>
         <DetailCarousel data={obj} />
         <View style={styles.content}>
