@@ -128,6 +128,7 @@ export const HandleUpdate = ({route}) => {
         })
         .then(() => {
           console.log('Completely Updated!');
+          Alert.alert('Completely Updated Item...');
           setAddress(null);
           setDetails(null);
           setPhn(null);
@@ -155,6 +156,7 @@ export const HandleUpdate = ({route}) => {
           Short_Description: Short,
         })
         .then(() => {
+          Alert.alert('Completely Updated Item...');
           console.log('Completely Updated!');
           setAddress(null);
           setDetails(null);

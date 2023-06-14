@@ -8,8 +8,6 @@ import Food1 from '../screens/Food1';
 import Pagoda from '../screens/Pagoda';
 import HomeScreen from '../screens/Home';
 
-import Food from '../screens/Food';
-
 const Tab = createBottomTabNavigator();
 
 //Screen names
@@ -26,6 +24,7 @@ const BottomNavigator = () => {
       screenOptions={({route}) => ({
         headerShown: false,
         tabBarStyle: {
+          position: 'absolute',
           backgroundColor: COLORS.base,
           height: '10%',
           borderTopRightRadius: 20,
@@ -48,7 +47,6 @@ const BottomNavigator = () => {
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
           let rn = route.name;
-
           if (rn === homeName) {
             iconName = focused ? 'home' : 'ios-home-outline';
           } else if (rn === FoodName) {
@@ -61,7 +59,7 @@ const BottomNavigator = () => {
             iconName = focused ? 'ios-map' : 'ios-map-outline';
           }
 
-          // You can return any component that you like here!
+          //  can return any component
           return (
             <Icon
               name={iconName}

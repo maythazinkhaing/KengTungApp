@@ -58,7 +58,7 @@ function About({navigation}) {
             <Text
               style={{
                 fontWeight: 'bold',
-                color: '#FEB139',
+                color: COLORS.yellow,
                 fontStyle: 'italic',
               }}>
               Wa, Ann, Akha, Akhu, Palaung
@@ -67,7 +67,7 @@ function About({navigation}) {
             <Text
               style={{
                 fontWeight: 'bold',
-                color: '#FEB139',
+                color: COLORS.yellow,
                 fontStyle: 'italic',
               }}>
               Lahu
@@ -93,7 +93,7 @@ function About({navigation}) {
             <Text
               style={{
                 fontWeight: 'bold',
-                color: '#FEB139',
+                color: COLORS.yellow,
                 fontStyle: 'italic',
               }}>
               {' '}
@@ -112,6 +112,52 @@ function About({navigation}) {
           <ImageBackground
             source={require('../assets/img/NongTong.jpg')}
             style={styles.img}></ImageBackground>
+        </View>
+        {/* paragraph */}
+        <View style={{paddingVertical: 10}}>
+          <Text style={styles.parag}>
+            {'\t'}
+            {'\t'}
+            There is a main market in the down town called
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: COLORS.yellow,
+                fontStyle: 'italic',
+              }}>
+              {' '}
+              Myo Mha Zay{' '}
+            </Text>
+            which you can buy anything and everything here. If you want to see
+            the diversity of locals, from breakfast to sweets, from dress to
+            utilities, from hand craft to techno, here is the place that you
+            shouldn't miss. The market is also a great place to eat. There are a
+            number of stalls selling local food (often noodle soup). The market
+            starts up early (around 5 am) and closes around noon.
+          </Text>
+        </View>
+        {/* image */}
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          <ImageBackground
+            source={require('../assets/img/market3.jpg')}
+            style={styles.Twoimg}></ImageBackground>
+          <ImageBackground
+            source={require('../assets/img/market.jpg')}
+            style={styles.Twoimg}></ImageBackground>
+        </View>
+        {/* Paragraph */}
+        <View style={{paddingVertical: 10}}>
+          <Text style={styles.parag}>
+            {'\t'}
+            {'\t'}
+            If you want to have a nautre or peacful holidays, Keng Tung must be
+            your first choice to visit in Eastern Shan State. You can see more
+            about travel places, local food and famous pagodas in the town on
+            our application. So, feel free to use Keng Tung application.
+          </Text>
         </View>
       </View>
     </ScrollView>

@@ -10,6 +10,6 @@ export default {
   gray: '#666666',
   grayLight: '#ccc',
   black: '#0a0a0a',
-  yellow: '#FEB139',
-  base: '#FFD279',
+  yellow: '#FBCA50',
+  base: '#FFDF7A',
 };

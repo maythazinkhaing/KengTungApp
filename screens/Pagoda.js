@@ -12,7 +12,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-
+import {Style} from '../assets/css/Style';
 import COLORS from '../assets/colors';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
@@ -95,21 +95,13 @@ export default function Pagoda({navigation}) {
             Short_Description: place.Short_Description,
           })
         }
-        style={styles.cover}>
-        <ImageBackground style={styles.ImgCard} source={{uri: place.image[0]}}>
+        style={Style.Card_cover}>
+        <ImageBackground style={Style.ImgCard} source={{uri: place.image[0]}}>
           {currentUser == 'maythazinkhaingmt@gmail.com' ? (
-            <View
-              style={{
-                position: 'absolute',
-
-                flex: 1,
-                alignSelf: 'flex-end',
-                right: 10,
-                top: 10,
-              }}>
+            <View style={Style.Card_button_container}>
               {/* Delete item */}
               <TouchableOpacity
-                style={styles.crossButton}
+                style={Style.Card_button}
                 onPress={() => onDelete(place.id)}>
                 <Icon
                   style={{top: -1, right: -0.9}}
@@ -120,7 +112,7 @@ export default function Pagoda({navigation}) {
               </TouchableOpacity>
               {/* Edit Items */}
               <TouchableOpacity
-                style={styles.crossButton}
+                style={Style.Card_button}
                 onPress={() =>
                   navigation.navigate('handleUpdate', {id: place.id})
                 }>
@@ -156,7 +148,7 @@ export default function Pagoda({navigation}) {
             </Text>
           </View> */}
         </ImageBackground>
-        <Text style={styles.title}>{place.title}</Text>
+        <Text style={Style.title}>{place.title}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -167,30 +159,19 @@ export default function Pagoda({navigation}) {
             name="alert-circle"
             size={10}
             color={COLORS.yellow}
-            style={styles.icon}
+            style={Style.Card_icon}
           />
-          <Text style={styles.itemDescription}>{place.Short_Description}</Text>
+          <Text style={Style.itemDescription}>{place.Short_Description}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: COLORS.white, flex: 1}}>
+    <SafeAreaView style={Style.container}>
       <FocusAwareStatusBar barStyle="dark-content" backgroundColor="white" />
 
-      <View
-        style={{
-          borderRadius: 10,
-          overflow: 'hidden',
-          border: 2,
-          backgroundColor: COLORS.light,
-          marginHorizontal: 20,
-          marginTop: 8,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 20,
-        }}>
+      <View style={Style.search_container}>
         <Icon
           name="search"
           size={10}
@@ -198,15 +179,7 @@ export default function Pagoda({navigation}) {
           style={{fontSize: 23}}
         />
         <TextInput
-          style={{
-            width: '100%',
-            color: 'dark',
-            fontSize: 12,
-            alignSelf: 'center',
-            paddingLeft: 20,
-            height: 45,
-            textTransform: 'capitalize',
-          }}
+          style={Style.search_textInput}
           value={input}
           placeholder="Search..."
           placeholderTextColor={COLORS.grayLight}
@@ -231,7 +204,7 @@ export default function Pagoda({navigation}) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          style={styles.shadow}
+          style={Style.Card_shadow}
           data={post}
           renderItem={({item}) => {
             if (input == '') {
@@ -246,67 +219,3 @@ export default function Pagoda({navigation}) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    height: '100%',
-    flex: 1,
-  },
-  ImgCard: {
-    height: 190,
-    width: '100%',
-    borderRadius: 15,
-    overflow: 'hidden',
-  },
-  title: {
-    color: COLORS.dark,
-    paddingLeft: 15,
-    paddingTop: 10,
-    fontFamily: 'Nunito-Bold',
-    fontSize: 13,
-  },
-  shadow: {
-    shadowColor: '#171717',
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-  },
-
-  cover: {
-    top: 5,
-    marginHorizontal: 20,
-    marginVertical: 10,
-    backgroundColor: 'white',
-    height: 270,
-    elevation: 2,
-    borderRadius: 15,
-  },
-  icon: {
-    fontSize: 15,
-
-    paddingRight: 5,
-  },
-  crossButton: {
-    padding: 8,
-    alignSelf: 'center',
-    backgroundColor: 'black',
-    marginBottom: 4,
-    borderRadius: 7,
-    opacity: 0.8,
-  },
-  scrollView: {
-    flex: 1,
-
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  itemDescription: {
-    color: COLORS.yellow,
-    fontSize: 12,
-
-    flex: 1,
-
-    fontFamily: 'Nunito-Bold',
-  },
-});

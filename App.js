@@ -8,9 +8,6 @@ import About from './screens/About';
 import COLORS from './assets/colors';
 import AddContent from './admin/addContent';
 import {HandleUpdate} from './admin/UpdateData';
-
-import auth from '@react-native-firebase/auth';
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -27,6 +24,7 @@ const App = () => {
   //   }, []);
 
   //   if (initializing) return null;
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

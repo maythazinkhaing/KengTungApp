@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {handleDelete} from '../admin/AuthProvider';
 import HomeLottieScreen from '../navigation/HomeLottie';
 import auth from '@react-native-firebase/auth';
+import {Style} from '../assets/css/Style';
 
 const category = [
   {
@@ -92,7 +93,7 @@ function Food1({navigation}) {
 
   const fetchData = async () => {
     try {
-      // const dataList = [];
+      const dataList = [];
 
       database()
         .ref('Items')
@@ -112,7 +113,7 @@ function Food1({navigation}) {
               Sub_Category,
             } = doc.val();
             const id = doc.key;
-            post.push({
+            dataList.push({
               title: Title,
               image: images,
               detail: Details,
@@ -124,7 +125,8 @@ function Food1({navigation}) {
             });
           });
 
-          // setPost(dataList);
+          setPost(dataList);
+          setData(dataList);
           setTimeout(() => {
             setLoading(false);
           }, 2000);
@@ -156,16 +158,9 @@ function Food1({navigation}) {
           source={{uri: place.image[0]}}
         />
         {currentUser == 'maythazinkhaingmt@gmail.com' ? (
-          <View
-            style={{
-              position: 'absolute',
-              flex: 1,
-              alignSelf: 'flex-end',
-              right: 10,
-              top: 10,
-            }}>
+          <View style={Style.Card_button_container}>
             {/* Delete item */}
-            <TouchableOpacity style={styles.crossButton}>
+            <TouchableOpacity style={Style.Card_button}>
               <Icon
                 style={{top: -1, right: -0.9}}
                 name="trash-outline"
@@ -176,7 +171,7 @@ function Food1({navigation}) {
             </TouchableOpacity>
             {/* Edit Items */}
             <TouchableOpacity
-              style={styles.crossButton}
+              style={Style.Card_button}
               onPress={() =>
                 navigation.navigate('handleUpdate', {id: place.id})
               }>
@@ -196,35 +191,19 @@ function Food1({navigation}) {
 
   // End navBar {fetch Data}
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: COLORS.base,
-        flex: 1,
-      }}>
+    <SafeAreaView style={Style.container}>
       <View
         style={{
           backgroundColor: COLORS.base,
-          // borderBottomLeftRadius: 20,
-          // borderBottomRightRadius: 20,
+
           elevation: 2,
           shadowColor: '#171717',
-          shadowOffset: {width: 0, height: 2},
-          shadowOpacity: 0.1,
-          shadowRadius: 1,
+          // shadowOffset: {width: 0, height: 2},
+          // shadowOpacity: 0.1,
+          // shadowRadius: 1,
         }}>
-        <View
-          style={{
-            borderRadius: 10,
-            overflow: 'hidden',
-            border: 2,
-            backgroundColor: COLORS.light,
-            marginHorizontal: 20,
-            marginTop: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 20,
-            marginVertical: 5,
-          }}>
+        {/* search bar */}
+        <View style={Style.search_container}>
           <Icon
             name="search"
             size={10}
@@ -232,14 +211,7 @@ function Food1({navigation}) {
             style={{fontSize: 23}}
           />
           <TextInput
-            style={{
-              width: '100%',
-              color: 'dark',
-              fontSize: 12,
-              alignSelf: 'center',
-              paddingLeft: 20,
-              height: 45,
-            }}
+            style={Style.search_textInput}
             value={input}
             placeholder="Search..."
             placeholderTextColor={COLORS.grayLight}
@@ -256,13 +228,17 @@ function Food1({navigation}) {
             </TouchableOpacity>
           ) : null}
         </View>
-        {/* <HomeCatTab activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          style={{marginVertical: 15, marginHorizontal: 20}}>
+          style={{
+            marginVertical: 15,
+            marginHorizontal: 20,
+          }}>
           {category.map(e => (
             <TouchableOpacity
+              key={e.key}
               style={[styles.inactive, status === e.status && styles.Bgactive]}
               activeOpacity={0.8}
               onPress={() => statusFilter(e.status)}>
@@ -277,12 +253,12 @@ function Food1({navigation}) {
           ))}
         </ScrollView>
       </View>
-      <View
+      {/* <View
         style={{backgroundColor: 'white', alignItems: 'center', padding: 10}}>
-        <Text style={{color: COLORS.base}}>
+        <Text style={{color: COLORS.yellow}}>
           Explore Popular KengTung's Local Food Here!
         </Text>
-      </View>
+      </View> */}
       {loading ? (
         <HomeLottieScreen />
       ) : (
@@ -290,6 +266,7 @@ function Food1({navigation}) {
           style={{
             flex: 1,
             backgroundColor: COLORS.white,
+            display: 'flex',
           }}>
           <FlatList
             scrollEnabled
@@ -315,7 +292,9 @@ function Food1({navigation}) {
               }
             }}
             numColumns={2}
-            columnWrapperStyle={{justifyContent: 'space-between'}}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+            }}
           />
         </View>
       )}
@@ -374,14 +353,7 @@ const styles = StyleSheet.create({
     padding: 10,
     // backgroundColor: 'red',
   },
-  crossButton: {
-    padding: 8,
-    alignSelf: 'center',
-    backgroundColor: 'black',
-    marginBottom: 4,
-    borderRadius: 7,
-    opacity: 0.8,
-  },
+
   scrollView: {
     flex: 1,
 
@@ -392,10 +364,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   TextActive: {
-    color: COLORS.base,
+    color: COLORS.yellow,
   },
   inactive: {
-    color: 'white',
+    color: COLORS.dark,
     margin: 5,
     paddingHorizontal: 8,
     paddingVertical: 2,

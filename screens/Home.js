@@ -15,7 +15,7 @@ import {
 import COLORS from '../assets/colors';
 import About from './About';
 import Carousel from '../navigation/Carousel';
-
+import {Style} from '../assets/css/Style';
 import {dummyData} from '../jsonFiles/data';
 import {ScrollView} from 'react-native-gesture-handler';
 import database from '@react-native-firebase/database';
@@ -83,7 +83,7 @@ export default function HomeScreen({navigation}) {
           .ref('/Items/')
           .orderByChild('Category_ID')
           .equalTo(1)
-          .limitToLast(5)
+          .limitToFirst(5)
           .once('value')
 
           .then(response => {
@@ -343,7 +343,6 @@ export default function HomeScreen({navigation}) {
         </View>
       </View>
 
-      {/* hometopNav */}
       <View
         style={{flexDirection: 'row', marginHorizontal: 15, marginBottom: 15}}>
         <TouchableOpacity onPress={() => setHome(true)}>
@@ -355,7 +354,7 @@ export default function HomeScreen({navigation}) {
             }}>
             <Text
               style={{
-                color: home ? COLORS.base : COLORS.dark,
+                color: home ? '#FBCF61' : COLORS.dark,
                 padding: 8,
                 fontSize: 13,
               }}>
@@ -403,7 +402,7 @@ export default function HomeScreen({navigation}) {
       {loading ? (
         <HomeLottieScreen />
       ) : (
-        <View style={{backgroundColor: 'white', flex: 1}}>
+        <View style={Style.container}>
           <View
             style={{
               backgroundColor: COLORS.base,
